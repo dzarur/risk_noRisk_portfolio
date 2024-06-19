@@ -1,0 +1,4 @@
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
+prediction_date = datetime(2020,1,1)
+end_or_period_date = prediction_date + relativedelta(months=6)#****
