@@ -1,7 +1,7 @@
 {
     "settings": {
         "exclude_top_risk": 1,
-        "index": "nasdaq100",
+        "index": "allCIK - Sheet1",
         "duration": "3"
     }
 }
