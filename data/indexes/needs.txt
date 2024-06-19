@@ -1,0 +1,3 @@
+nasdaq100 file containing CIK of all companies
+snp500 file containing CIK of all companies
+etc.
