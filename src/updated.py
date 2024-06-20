@@ -1,6 +1,5 @@
 import json
 import pandas as pd
-from glob import glob
 from datetime import datetime
 
 with open('config.json', 'r') as file:
@@ -25,20 +24,24 @@ def porftolio_price_change_contribution(weight, stock_price_change_percent):
 def parse_date(date_str):
     year, month = date_str[1:5], date_str[7:]
     return datetime(int(year), int(month), 1)
+# 
+# def generate_all_paths(start_date, end_date, base_path):
+#     start = parse_date(start_date)
+#     end = parse_date(end_date)
+#     file_paths = []
+#     while start <= end:
+#         formatted_date = "y{year}_m{month}".format(year = start.year, month = start.month)
+#         file_path = "{base_path}/{formatted_date}.csv".format(base_path = base_path, formatted_date = formatted_date)
+#         file_paths.append(file_path)
+#         if start.month == 12:
+#             start = start.replace(year=start.year + 1, month=1)
+#         else:
+#             start = start.replace(month=start.month + 3)
+#     return file_paths
 
-def generate_all_paths(start_date, end_date, base_path):
-    start = parse_date(start_date)
-    end = parse_date(end_date)
-    file_paths = []
-    while start <= end:
-        formatted_date = "y{year}_m{month}".format(year = start.year, month = start.month)
-        file_path = "{base_path}/{formatted_date}.csv".format(base_path = base_path, formatted_date = formatted_date)
-        file_paths.append(file_path)
-        if start.month == 12:
-            start = start.replace(year=start.year + 1, month=1)
-        else:
-            start = start.replace(month=start.month + 3)
-    return file_paths
+def calculate_stock_price_change(cik, start_date, end_date):
+    path_start_stock_price = "./data/stock_prices/{date}.csv".format(date = start_date)
+    path_end_stock_price = "./data/stock_price/{date}.csv".format(date = end_date)
+    df_start_stock_price = pd.read_csv(path_start_stock_price)
+    df_end_stock_price = pd.read_csv(path_end_stock_price)
 
-def calculate_stock_price_change(cik, start, end):
-    pass
