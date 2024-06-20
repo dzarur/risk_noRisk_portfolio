@@ -6,7 +6,7 @@ with open('config.json', 'r') as file:
     config = json.load(file)
 settings = config['settings']
 wanted_CIK = settings["index"]
-exclude = settings['exclude_top_risk']
+topRisk = settings['exclude_top_risk']
 duration = settings['duration']
 CIK_path = f"./data/indexes/{wanted_CIK}.csv"
 
@@ -18,29 +18,36 @@ except FileNotFoundError:
 stock_data = glob.glob('./data/stock_prices/*.csv')
 stock_df = []
 for each in stock_data:
-    df = pd.read_csv(each, parse_dates=['date']) 
+    df = pd.read_csv(each, parse_dates=['date']) #maybe date is unnecessary
     stock_df.append(df)
 stock_df = pd.concat(stock_df, ignore_index=True)
 
-# risk_data= glob.glob('./data/risk_scores/*.csv')
-# risk_df = []
-# for each in risk_data:
-#     df = pd.read_csv(each, parse_dates=['date']) 
-#     risk_df.append(df)
-# risk_df = pd.concat(risk_df, ignore_index=True)
+risk_data= glob.glob('./data/risk_scores/*.csv')
+risk_df = []
+for each in risk_data:
+    df = pd.read_csv(each, parse_dates=['date']) #maybe date is unnecessary
+    risk_df.append(df)
+risk_df = pd.concat(risk_df, ignore_index=True)
 
-# market_cap_data = glob.glob('./data/market_cap/*.csv')
-# market_cap_df = []
-# for each in market_cap_data:
-#     df = pd.read_csv(each, parse_dates=['date']) 
-#     market_cap_df.append(df)
-# market_cap_df = pd.concat(market_cap_risk, ignore_index=True)
+market_cap_data = glob.glob('./data/market_cap/*.csv')
+market_cap_df = []
+for each in market_cap_data:
+    df = pd.read_csv(each, parse_dates=['date']) #maybe date is unnecessary
+    market_cap_df.append(df)
+market_cap_df = pd.concat(market_cap_df, ignore_index=True)
 
+relevant_risk_scores = risk_df[risk_df['CIK'].isin(CIKs['CIK'])]
+relevant_stock_prices = stock_df[stock_df['CIK'].isin(CIKs['CIK'])]
+relevant_market_cap = market_cap_df[market_cap_df['CIK'].isin(CIKs['CIK'])]
 
-def relevant_companies():
-    relevant_stock_df = stock_df[stock_df['CIK'].isin(CIKs['CIK'])]
-    # relevant_risk_df = risk_df[risk_df['CIK']].isin(CIKs['CIK'])
-    # relevant_market_cap_df = market_cap_df[market_cap_df['CIK']].isin(CIKs['CIK'])
+top_risk_scores = relevant_risk_scores.sort_values(by='risk_score', ascending=False).head(topRisk)
+top_risk_stock_prices = relevant_stock_prices[relevant_stock_prices.isin(top_risk_scores)]
+top_risk_market_cap = relevant_market_cap[relevant_market_cap.isin(top_risk_scores)]
+
+risk_scores_without_most_risky = relevant_risk_scores[~relevant_risk_scores.isin(top_risk_scores)]
+stock_prices_without_most_risky = relevant_stock_prices[~relevant_stock_prices.isin(top_risk_stock_prices)]
+market_cap_without_most_risky = relevant_market_cap[~relevant_market_cap.isin(top_risk_market_cap)]
+
 
 def stock_price_change_percent(first, second):
     return (second-first)/first
@@ -53,12 +60,13 @@ def porftolio_price_change_contribution(weight, stock_price_change_percent):
 
 
 
-
 def entire_portfolio():
-    pass
+    total_market_cap = relevant_market_cap['market_cap_at_prediction_date'].sum()
+
 
 def index_portfolio_excluding_riskiest():
     pass
+
 
 def index_portfolio_riskiest_only():
     pass
