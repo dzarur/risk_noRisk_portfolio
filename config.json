@@ -2,6 +2,6 @@
     "exclude_top_risk": 1,
     "index": "all_companies",
     "duration": 3,
-    "start_date": "2021_m1"
-    
+    "start_date": "y2021_m1",
+    "end_date": "y2021_m4"
 }
