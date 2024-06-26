@@ -29,17 +29,18 @@ series_stock_prices_at_end_of_period=(pd.read_csv("./data/stock_prices/{date}.cs
 series_stock_prices_at_end_of_period = pd.to_numeric(series_stock_prices_at_end_of_period, errors='coerce')
 
 df_market_cap = pd.read_csv("./data/market_cap/{date}.csv".format(date = start_date), index_col='CIK')
-df_market_cap['market_cap_at_prediction_date'] = pd.to_numeric(df_market_cap['market_cap_at_prediction_date'], errors='coerce')
+df_market_cap['market_cap_at_prediction_date'] = pd.to_numeric(df_market_cap['market_cap_at_prediction_date'], errors='coerce').astype(float)
+print(df_market_cap['market_cap_at_prediction_date'].dtypes)
+print(df_market_cap.head())
 
 df_risk_scores = pd.read_csv("./data/risk_scores/{date}.csv".format(date = start_date), index_col='CIK')
 df_risk_scores['risk_score'] = pd.to_numeric(df_risk_scores['risk_score'], errors='coerce')
 
-# print(df_market_cap.head())
 df_portfolio = pd.concat([df_stock_prices_at_prediction_date, 
                           series_stock_prices_at_end_of_period, 
                           df_market_cap, df_risk_scores], axis=1)
 df_portfolio = df_portfolio[df_portfolio.index.isin(ciks['CIK'])]
-# print(df_portfolio['market_cap_at_prediction_date'])
+print(df_portfolio.dtypes['market_cap_at_prediction_date'])
 
 # (df_portfolios
 # .assign(stock_pct_change = df_portfolio.eval('(stock_prices_at_end_of_period - stock_price_at_prediction_date)/stock_price_at_prediction_date'),
@@ -66,7 +67,7 @@ def compute_portfolio_pct_change(df_portfolio: pd.DataFrame) -> Tuple[float, pd.
         The portfolio with the contribution of each company
     """
     total_market_cap = df_portfolio['market_cap_at_prediction_date'].sum()
-    print(total_market_cap)
+    # print(total_market_cap)
     df_portfolio['weight'] = df_portfolio['market_cap_at_prediction_date'] / total_market_cap
     df_portfolio['pct_change_contribution'] = df_portfolio['stock_pct_change'] * df_portfolio['weight']
     total_pct_change = df_portfolio['pct_change_contribution'].sum()
@@ -74,16 +75,14 @@ def compute_portfolio_pct_change(df_portfolio: pd.DataFrame) -> Tuple[float, pd.
     return total_pct_change
 compute_portfolio_pct_change(df_most_risky_portfolio)
 
-def analyze_portfolio(start_date:datetime, end_date:datetime, index_name:str) -> Dict[str, Any]:
-    pass
-    
-# lst_dates_portfolio_pct_changes = []
-# for date_str in dates_strs:
-#     # creating the record information
-#     date_portfolios_changes ={
-#         'date': date_str,
-#         'index_portfolio_pct_change': ,
-#         'index_portfolio without riskiest percentile change': -50,
-#         'index_riskiest_only_portfolio': 30,
-#         }
-#     lst_dates_portfolio_pct_changes.append(date_portfolios_changes)
+# def analyze_portfolio(start_date:datetime, end_date:datetime, index_name:str) -> Dict[str, Any]:
+#     lst_dates_portfolio_pct_changes = []
+#     for date_str in dates_strs:
+#         # creating the record information
+#         date_portfolios_changes ={
+#             'date': date_str,
+#             'index_portfolio_pct_change': ,
+#             'index_portfolio without riskiest percentile change': -50,
+#             'index_riskiest_only_portfolio': 30,
+#             }
+#         lst_dates_portfolio_pct_changes.append(date_portfolios_changes)

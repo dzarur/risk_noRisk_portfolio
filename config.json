@@ -1,6 +1,6 @@
 {
     "exclude_top_risk": 1,
-    "index": "all_companies",
+    "index": "nasdaq100",
     "duration": 3,
     "start_date": "y2021_m1",
     "end_date": "y2021_m4"
