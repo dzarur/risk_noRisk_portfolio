@@ -4,13 +4,25 @@ import json
 from datetime import datetime
 from typing import Dict, Any, Tuple
 
+""" This script intakes campany data over time
+    and calculates the % change in stock price
+    relative to it's market value. 
+    
+    How?
+    Combining relavent data: CIK, market cap,
+    risk score, and company stock price. Then 
+    performing vectorized operations to efficiently
+    calculate the weight contribution and stock
+    price percent change.
+    """
+
 with open('config.json', 'r') as file:
     config = json.load(file)
 index = config["index"]
 top_risk = config['exclude_top_risk']
 duration = config['duration']
-start_date = config['start_date']
-end_date = config['end_date']
+start_date = 'y2021_m1'
+end_date = 'y2021_m4'
 cik_path = "./data/indexes/{index}/{date}.csv".format(index = index, date = start_date)
 ciks = pd.read_csv(cik_path)
 lst_zero_stock_price_at_prediction_date = []
